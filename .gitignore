@@ -5,3 +5,35 @@ build
 venv/
 dist/
 *.egg
+# Python bytecode
+*.py[cod]
+*$py.class
+.cache/
+.pytest_cache/
+.mypy_cache/
+
+# Virtual envs
+.venv/
+ENV/
+env/
+
+# Coverage
+.coverage*
+coverage.xml
+htmlcov/
+
+# Sphinx docs
+docs/_build/
+
+# Editors/IDEs
+.vscode/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project-specific
+lib/urlwatch/tests/data/cache.db
+share/urlwatch/examples/*.edit*
+*.edit*
