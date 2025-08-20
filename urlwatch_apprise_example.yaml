@@ -1,0 +1,11 @@
+---
+report:
+  text:
+    enabled: false
+  apprise:
+    enabled: true
+    urls:
+      - "mmosts://<your-mattermost-url>/<your-mattermost-token>"
+    format: markdown
+    subject: "{count} changes: {jobs}"
+
