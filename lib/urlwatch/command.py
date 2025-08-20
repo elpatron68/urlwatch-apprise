@@ -358,7 +358,9 @@ class UrlwatchCommand:
         report = Report(self.urlwatcher)
 
         def build_job(name, url, old, new):
-            job = JobBase.unserialize({'name': name, 'url': url})
+            # Force an explicit job kind to avoid ambiguous auto-detection when
+            # custom jobs from hooks overlap with the generic test job schema
+            job = JobBase.unserialize({'kind': 'url', 'name': name, 'url': url})
 
             # Can pass in None as cache_storage, as we are not
             # going to load or save the job state for testing;
