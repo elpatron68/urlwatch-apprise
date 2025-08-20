@@ -192,6 +192,13 @@ DEFAULT_CONFIG = {
             'application': '',
             'subject': '{count} changes: {jobs}'
         },
+        'apprise': {
+            'enabled': False,
+            'urls': [],
+            'config_urls': [],
+            'format': 'text',
+            'subject': '{count} changes: {jobs}'
+        },
         'shell': {
             'enabled': False,
             'command': '',

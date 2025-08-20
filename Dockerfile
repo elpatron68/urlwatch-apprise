@@ -3,10 +3,17 @@ FROM python:3.12.0-alpine3.18
 
 # Optional python modules for additional functionality
 # https://urlwatch.readthedocs.io/en/latest/dependencies.html#optional-packages
-ARG OPT_PYPKGS="beautifulsoup4 jsbeautifier cssbeautifier aioxmpp"
+# Include apprise to enable multi-service notifications
+ARG OPT_PYPKGS="beautifulsoup4 jsbeautifier cssbeautifier aioxmpp apprise"
+
+# Optional system packages for filters/reporters that need external tools
+# - jq: JSON query filter
+# - poppler-utils: provides pdftotext for PDF to text filter
+# - tesseract-ocr (+ english data): OCR filter
+ARG OPT_APK="jq poppler-utils tesseract-ocr tesseract-ocr-data-eng"
 ENV HOME="/home/user"
 
-RUN adduser -D user
+RUN apk add --no-cache $OPT_APK && adduser -D user
 USER user
 WORKDIR $HOME
 

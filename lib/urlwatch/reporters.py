@@ -73,6 +73,11 @@ try:
 except ImportError:
     AnsiToWin32 = None
 
+try:
+    import apprise
+except ImportError:
+    apprise = None
+
 logger = logging.getLogger(__name__)
 
 # Regular expressions that match the added/removed markers of GNU wdiff output
@@ -1045,6 +1050,57 @@ class XMPPReporter(TextReporter):
 
         for chunk in chunkstring(text, self.MAX_LENGTH, numbering=True):
             asyncio.run(xmpp.send(chunk))
+
+
+class AppriseReporter(TextReporter):
+    """Send notifications via Apprise to one or many services"""
+
+    __kind__ = 'apprise'
+
+    def submit(self):
+        body_text = '\n'.join(super().submit())
+        if not body_text:
+            logger.debug('Not sending apprise (no changes)')
+            return
+
+        filtered_job_states = list(self.report.get_filtered_job_states(self.job_states))
+        subject_args = {
+            'count': len(filtered_job_states),
+            'jobs': ', '.join(job_state.job.pretty_name() for job_state in filtered_job_states),
+        }
+        subject = self.config.get('subject', '{count} changes: {jobs}').format(**subject_args)
+
+        if apprise is None:
+            logger.error('Apprise not available. Install with: pip install apprise')
+            return
+
+        apobj = apprise.Apprise()
+
+        urls = self.config.get('urls', [])
+        if isinstance(urls, str):
+            urls = [urls]
+        for url in urls:
+            apobj.add(url)
+
+        config_urls = self.config.get('config_urls', [])
+        if config_urls:
+            conf = apprise.AppriseConfig()
+            for url in config_urls:
+                conf.add(url)
+            apobj.add(conf)
+
+        fmt = self.config.get('format', 'text').lower()
+        if fmt == 'html':
+            body = '\n'.join(self.convert(HtmlReporter).submit())
+            body_format = apprise.NotifyFormat.HTML
+        elif fmt == 'markdown':
+            body = '\n'.join(self.convert(MarkdownReporter).submit())
+            body_format = apprise.NotifyFormat.MARKDOWN
+        else:
+            body = body_text
+            body_format = apprise.NotifyFormat.TEXT
+
+        apobj.notify(title=subject, body=body, body_format=body_format)
 
 
 class ProwlReporter(TextReporter):

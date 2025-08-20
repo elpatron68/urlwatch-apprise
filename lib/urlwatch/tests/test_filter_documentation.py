@@ -44,7 +44,7 @@ class YAMLCodeBlockVisitor(docutils.nodes.NodeVisitor):
 
 
 def load_filter_testdata():
-    with open(os.path.join(root, 'docs/source/filters.rst')) as f:
+    with open(os.path.join(root, 'docs/source/filters.rst'), encoding='utf8') as f:
         doc = parse_rst(f.read())
     visitor = YAMLCodeBlockVisitor(doc)
     doc.walk(visitor)
