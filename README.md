@@ -85,6 +85,24 @@ pip install apprise jq pytesseract pillow pdftotext
 pytest -q
 ```
 
+### Optional: Makefile helpers
+
+For convenient setup and test runs (Debian/Ubuntu/WSL):
+
+```bash
+# Install required system packages for optional tests (Poppler/Tesseract, headers)
+make deps-system
+
+# Install Python dependencies into .venv (including test extras)
+make deps-venv
+
+# Run the test suite
+make test
+
+# One-shot: system deps + venv deps + tests
+make all
+```
+
 Note: some tests exercise filters that depend on system tools/libraries (e.g., `grep`/`awk` for `shellpipe`,
 Poppler/pdftotext, Tesseract, jq). On Windows, these tools are easier to satisfy in WSL. On Linux:
 
